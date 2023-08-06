@@ -155,22 +155,53 @@ descriptionInput.addEventListener("input", (event) => {
 
 
 // Download Image by html2canvas Library
-downloadBtn.addEventListener("click", (event) => {
-    html2canvas(
-        document.getElementById('poster'),
-        {
-            allowTaint: true,
-            useCORS: true
-        }
-    ).then(canvas => {
-        download(canvas)
-    })
-  });
+// downloadBtn.addEventListener("click", (event) => {
+//     html2canvas(
+//         document.getElementById('poster'),
+//         {
+//             allowTaint: true,
+//             useCORS: true
+//         }
+//     ).then(canvas => {
+//         download(canvas)
+//     })
+//   });
 
-// Download Function
-const download = function (canvas) {
-    const link = document.createElement('a');
-    link.download = 'poster.png';
-    link.href = canvas.toDataURL()
-    link.click();
-}
+// // Download Function
+// const download = function (canvas) {
+//     const link = document.createElement('a');
+//     link.download = 'poster.png';
+//     link.href = canvas.toDataURL()
+//     link.click();
+// }
+
+
+downloadBtn.addEventListener('click', function() {
+    var posterContent = document.getElementById('poster');
+    var width = posterContent.offsetWidth;
+    var height = posterContent.offsetHeight;
+    var canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    var ctx = canvas.getContext('2d');
+    var img = new Image();
+
+    var dataURL = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '">' +
+        '<foreignObject width="100%" height="100%">' +
+        new XMLSerializer().serializeToString(posterContent) +
+        '</foreignObject>' +
+        '</svg>');
+
+    img.src = dataURL;
+
+    img.onload = function() {
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        var link = document.createElement('a');
+        link.download = 'poster.png';
+
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    };
+});
